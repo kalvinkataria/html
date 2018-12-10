@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>A simple interactive page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<style>
+	body {
+		font-family: Arial;
+	}
+	h1 {
+		text-align: center;
+	}
+	table {
+		width: 100%;
+		margin: auto;
+		text-align: center;
+	}
+	table, tr, th, td {
+		color: black;
+		padding: 1px;
+		border: 1px solid grey;
+		border-collapse: collapse;
+		font-size: 18px;
+	}
+	th {
+		background: #888888;
+		background: #888888;
+	}
+	.pagination {
+		text-align: center;
+	}
+
+	.pagebutton {
+		background: #888888;
+		color: white;
+		border: 1px solid white;
+		font-size: 18px;
+		border-radius: 4px;
+		transition: .2s;
+		overflow: hidden;
+		border-radius: 6px;
+	}
+	.pagebutton:hover {
+		background-color: black;
+	}
+</style>
+<script>
+    $(document).ready(function() {
+        $.get("https://www.cs.kent.ac.uk/people/staff/sm951/co539/assessment2/hygiene.php?operation=get&page=1", function(data) {
+        	for(i = 0; i < data.length; i++)
+        	{
+        		$("#results").append("<tbody><tr><td>" + data[i].fhrsId + "</td><td>" + data[i].name + "</td><td>" + data[i].addressLine + "</td><td>" + data[i].hygieneRating + "</td><td>" + data[i].ratingDate + "</td></tbody>")
+        	}
+        });
+
+        $.get("https://www.cs.kent.ac.uk/people/staff/sm951/co539/assessment2/hygiene.php?operation=pages", function(data) {
+        	for(i = 1; i <= data.pages; i++) 
+        	{
+        		$(".pagination").append("<button class='pagebutton'>" + i + "</button>");
+        	}
+
+        	$(".pagebutton").click(function() {
+        		var buttonnumber = $(this).text();
+        		$.get("https://www.cs.kent.ac.uk/people/staff/sm951/co539/assessment2/hygiene.php", {operation: 'get', page: buttonnumber}, function(data) {
+        			console.log(buttonnumber);
+        			$("#results tbody").remove();
+        			for(i = 0; i < data.length; i++) 
+        			{
+        				var id = data[i].fhrsId;
+        				var name = data[i].name;
+        				var address = data[i].addressLine;
+        				var hygienerating = data[i].hygieneRating;
+        				var ratingdate = data[i].ratingDate;
+
+        				$("#results").append("<tbody><tr><td>" + id + "</td><td>" + name + "</td><td>" + address + "</td><td>" + hygienerating + "</td><td>" + ratingdate + "</td></tbody>")
+        			}
+        		});
+        	});
+        });
+
+        $.get("https://www.cs.kent.ac.uk/people/staff/sm951/co539/assessment2/rating.php", {name: variable}, function(data) {
+        });
+    });
+</script>
+</head>
+<body>
+    <h1>Food Standards Agency</h1>
+    <div class="pagination"></div>
+    <br />
+    <table id="results">
+    	<thead>
+    		<tr>
+    			<th>ID</th>
+    			<th>Name</th>
+    			<th>Address</th>
+    			<th>Hygiene</th>
+    			<th>Date</th>
+    			<th>Rating</th>
+    		</tr>
+    	<thead>
+    </table>
+</body>
+</html>
